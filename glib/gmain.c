@@ -2413,6 +2413,36 @@ g_source_remove_by_funcs_user_data (GSourceFuncs *funcs,
     return FALSE;
 }
 
+/**
+ * g_clear_source: (skip)
+ * @tag_ptr: (not nullable): a pointer to the ID of the source to remove.
+ *
+ * Clears a source.
+ *
+ * @tag_ptr must not be %NULL.
+ *
+ * If the ID is less or equal than zero then this function does nothing.
+ * Otherwise, the source is removed and the tag is set to 0.
+ *
+ * A macro is also included that allows this function to be used without
+ * pointer casts.
+ *
+ * Since: 2.56
+ **/
+#undef g_clear_source
+void
+g_clear_source (guint *tag_ptr)
+{
+  guint tag;
+
+  tag = *tag_ptr;
+  if (tag > 0)
+    {
+      *tag_ptr = 0;
+      g_source_remove (tag);
+    }
+}
+
 #ifdef G_OS_UNIX
 /**
  * g_source_add_unix_fd:

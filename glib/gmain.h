@@ -563,6 +563,23 @@ GLIB_AVAILABLE_IN_ALL
 gboolean g_source_remove_by_funcs_user_data  (GSourceFuncs  *funcs,
                                               gpointer       user_data);
 
+GLIB_AVAILABLE_IN_2_56
+void    g_clear_source (guint *tag_ptr);
+
+#define g_clear_source (tag_ptr)                           \
+  G_STMT_START {                                           \
+    G_STATIC_ASSERT (sizeof *(tag_ptr) == sizeof (guint)); \
+    guint *_tag_ptr = (guint *) (tag_ptr);                 \
+    guint tag;                                             \
+                                                           \
+    tag = *_tag_ptr;                                       \
+    if (tag > 0)                                           \
+      {                                                    \
+        *_tag_ptr = 0;                                     \
+        g_source_remove (tag);                             \
+      }                                                    \
+  } G_STMT_END
+
 /* Idles, child watchers and timeouts */
 GLIB_AVAILABLE_IN_ALL
 guint    g_timeout_add_full         (gint            priority,
